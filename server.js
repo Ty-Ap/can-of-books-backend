@@ -62,7 +62,7 @@ app.post('/books', postBook);
 
 async function postBook(request,response,next){
   try {
-    let createdBook = Book.create(request.body);
+    let createdBook = await Book.create(request.body);
     response.status(200).send(createdBook)
     
   } catch (error) {
@@ -71,6 +71,24 @@ async function postBook(request,response,next){
   }
 }
 
+
+app.put('/books/:bookID', updateBook);
+
+async function updateBook(request, response, next){
+  try {
+    let id = request.params.bookID;
+    let data = request.body;
+
+    const updatedBook = await Book.findByIdAndUpdate(id, data, { new: true, overwrite: true });
+
+    response.status(200).send(updatedBook);
+
+
+  } catch (error) {
+    console.log(error.message);
+    next(error);
+  }
+}
 
 app.get('*', (request,response) => {
   response.status(404).send('not available');
